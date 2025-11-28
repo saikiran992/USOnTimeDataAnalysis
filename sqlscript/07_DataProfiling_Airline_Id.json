@@ -1,0 +1,21 @@
+{
+	"name": "07_DataProfiling_Airline_Id",
+	"properties": {
+		"description": "The queries in this script are used for data profiling and deciding best data types for airline data",
+		"folder": {
+			"name": "02_Data Profiling Lookup"
+		},
+		"content": {
+			"query": "-- This is auto-generated code\nSELECT\n    TOP 10 *\nFROM\n    OPENROWSET(\n        BULK 'L_AIRLINE_ID.csv',\n        DATA_SOURCE = 'USOnTimeProject_Lookup',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW = TRUE\n    ) AS [AirlineId]\n\n    --RecordCount - 6812\n\n    SELECT\n    COUNT(1)\nFROM\n    OPENROWSET(\n        BULK 'L_AIRLINE_ID.csv',\n        DATA_SOURCE = 'USOnTimeProject_Lookup',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW = TRUE\n    ) AS [AirlineId]\n\n    SELECT\n        MAX(Code) CodeMaxLen,\n        MAX(LEN([Description])) CodeMaxDescription\n    FROM\n    OPENROWSET(\n        BULK 'L_AIRLINE_ID.csv',\n        DATA_SOURCE = 'USOnTimeProject_Lookup',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW = TRUE\n    ) AS [AirlineId]\n\nSELECT\n    TOP 10 *\nFROM\n    OPENROWSET(\n        BULK 'L_AIRLINE_ID.csv',\n        DATA_SOURCE = 'USOnTimeProject_Lookup',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW = TRUE\n    ) \n    WITH\n    (\n        Code INT,\n        [Description] VARCHAR(100)\n    ) AS [AirlineId]\n\n--sp to find the data types used    \n\nEXEC sp_describe_first_result_set N'SELECT\n    TOP 10 *\nFROM\n    OPENROWSET(\n        BULK ''https://adlsusontimeproject.dfs.core.windows.net/fsusontimeproject/Lookup/L_AIRPORT_ID.csv'',\n        FORMAT = ''CSV'',\n        PARSER_VERSION = ''2.0'',\n        HEADER_ROW = TRUE\n    ) AS [AirlineId]'",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "USOnTimeProject",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

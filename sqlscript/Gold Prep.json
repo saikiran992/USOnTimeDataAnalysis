@@ -1,0 +1,20 @@
+{
+	"name": "Gold Prep",
+	"properties": {
+		"folder": {
+			"name": "08_Gold"
+		},
+		"content": {
+			"query": "/* SELECT\n    TimeInt,\n    TIMEFROMPARTS(TimeInt / 100, TimeInt % 100, 0, 0, 0) AS StandardTime\nFROM\n    YourTable;\n*/\n\nSELECT\nROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS OnTimeSKey,\nyear as [Year],\nmonth as [Month],\nFL_DATE as FlightDate,\nOP_UNIQUE_CARRIER as AirlineCode,\nOP_CARRIER_AIRLINE_ID as AirlineId,\nOP_CARRIER_FL_NUM as FlightNumber,\nORIGIN_AIRPORT_ID as OriginAirportId,\nORIGIN as OriginAirportCode,\nORIGIN_STATE_ABR as OriginStateCode,\nDEST_AIRPORT_ID as DestinationAirportId,\nDEST as DestinationAirportCode,\nDEST_STATE_ABR as DestinationStateCode,\nCRS_DEP_TIME as ScheduledDepartureTimeKey,\nDEP_TIME as ActualDepartureTimeKey,\nDEP_DELAY as DepartureDelayInMinutes,\nTAXI_OUT as TaxiOutTimeInMinutes,\nTAXI_IN as TaxiInTimeInMinutes,\nCRS_ARR_TIME as ScheduledArrivalTimeKey,\nARR_TIME as ActualArrivalTimeKey,\nARR_DELAY as ArrivalDelayInMinutes,\nCANCELLED as IsCancelled,\nCANCELLATION_CODE as CancellationCode,\nDIVERTED as IsDiverted,\nCRS_ELAPSED_TIME as EstimatedElapsedTimeInMinutes,\nACTUAL_ELAPSED_TIME as ActualElapsedTimeInMinutes,\nACTUAL_ELAPSED_TIME - CRS_ELAPSED_TIME as TotalDelayInMinutes,\nAIR_TIME as AirTime,\nDISTANCE as Distance,\nCARRIER_DELAY as AirlinesDelayInMinutes,\nWEATHER_DELAY as WeatherDelayInMinutes,\nNAS_DELAY as NasDelayInMinutes,\nSECURITY_DELAY as SecurityDelayInMinutes,\nLATE_AIRCRAFT_DELAY as LateAircraftDelayInMinutes\nFROM \nsilver.vw_USOnTimeData\nWHERE year ='2022' and month='01'\nORDER BY OnTimeSKey\n\n\n\n\nSELECT TOP 10 OTD.FL_DATE as FlightDate,\nOTD.OP_UNIQUE_CARRIER as AirlineCode,\nAL.Description as AirlinesName,\nOTD.OP_CARRIER_FL_NUM as FlightNumber,\nOTD.ORIGIN as OriginAirportCode,\nAPO.Description as OriginAirportName,\nOTD.ORIGIN_STATE_ABR as OriginStateCode,\nSO.Description as OriginState,\nOTD.DEST as DestinationAirportCode,\nAPD.Description as DestinationAirportName,\nOTD.DEST_STATE_ABR as DestinationStateCode,\nSD.Description as DestinationState,\nTDS.TimeValue as ScheduledDepartureTime,\nTDS.TimeBucket as DepartureTimeBucket,\nTDA.TimeValue as ActualDepartureTime\nFROM\nsilver.vw_USOnTimeData OTD\nLEFT JOIN silver.Airlines AL ON OTD.OP_UNIQUE_CARRIER = AL.Code\nLEFT JOIN silver.Airport APO ON OTD.ORIGIN = APO.Code\nLEFT JOIN silver.States SO ON OTD.ORIGIN_STATE_ABR = SO.Code\nLEFT JOIN silver.Airport APD ON OTD.DEST = APD.Code\nLEFT JOIN silver.States SD ON OTD.DEST_STATE_ABR = SD.Code\nLEFT JOIN silver.Time TDS ON OTD.CRS_DEP_TIME = TDS.TimeKey\nLEFT JOIN silver.Time TDA ON OTD.CRS_DEP_TIME = TDA.TimeKey\nLEFT JOIN silver.Time TAS ON OTD.CRS_DEP_TIME = TAS.TimeKey\nLEFT JOIN silver.Time TAA ON OTD.CRS_DEP_TIME = TAA.TimeKey\n\n\n\nSELECT\n    OTD.OP_UNIQUE_CARRIER as AirlineCode,\n    AL.Description as AirlinesName,\n    SUM(CANCELLED) as TotalCancelledFlights,\n    SUM(DIVERTED) as TotalDivertedFlights,\n    COUNT(OP_CARRIER_FL_NUM) AS TotalScheduledFlights,\n    CAST(CAST(SUM(CANCELLED) AS DECIMAL(10,2))/CAST(COUNT(OP_CARRIER_FL_NUM) AS DECIMAL(10,2)) *100 as DECIMAL(10,2)) as CancelledPercentage,\n    CAST(CAST(SUM(DIVERTED) AS DECIMAL(10,2))/CAST(COUNT(OP_CARRIER_FL_NUM) AS DECIMAL(10,2)) *100 as DECIMAL(10,2)) as DivertedPercentage\nFROM\n    silver.vw_USOnTimeData OTD\n    LEFT JOIN silver.Airlines AL ON OTD.OP_UNIQUE_CARRIER = AL.Code\nWHERE\n    OTD.year='2022' AND OTD.month ='01'\nGROUP BY\n    OTD.OP_UNIQUE_CARRIER,\n    AL.Description\nORDER BY AirlineCode",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "USOnTimeProject",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

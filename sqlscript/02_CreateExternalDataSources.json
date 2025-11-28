@@ -1,0 +1,21 @@
+{
+	"name": "02_CreateExternalDataSources",
+	"properties": {
+		"description": "Script for creating external data sources referring to data lake container",
+		"folder": {
+			"name": "01_Preperation"
+		},
+		"content": {
+			"query": "-- This is auto-generated code\n\nCREATE EXTERNAL DATA SOURCE USOnTimeProject_Lookup\nWITH(\n    LOCATION = 'https://adlsusontimeproject.dfs.core.windows.net/fsusontimeproject/Lookup'\n)\n\nCREATE EXTERNAL DATA SOURCE USOnTimeProject_Reporting\nWITH(\n    LOCATION = 'https://adlsusontimeproject.dfs.core.windows.net/fsusontimeproject/OnTimeReporting'\n)\n\nCREATE EXTERNAL DATA SOURCE USOnTimeProject_Reporting_Parquet\nWITH(\n    LOCATION = 'https://adlsusontimeproject.dfs.core.windows.net/fsusontimeproject/OnTimeReporting_Parquet'\n)\n\nCREATE EXTERNAL DATA SOURCE USOnTimeProject_RootFS\nWITH(\n    LOCATION = 'https://adlsusontimeproject.dfs.core.windows.net/fsusontimeproject'\n)",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "USOnTimeProject",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

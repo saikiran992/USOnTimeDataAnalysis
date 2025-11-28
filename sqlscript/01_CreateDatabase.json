@@ -1,0 +1,21 @@
+{
+	"name": "01_CreateDatabase",
+	"properties": {
+		"description": "Create a new database and schemas",
+		"folder": {
+			"name": "01_Preperation"
+		},
+		"content": {
+			"query": "USE master\nGO\n\nCREATE DATABASE USOnTimeProject\nGO\n\nUSE USOnTimeProject\nGO\n\nCREATE SCHEMA bronze\nGO\n\nCREATE SCHEMA silver\nGO\n\nCREATE SCHEMA gold\nGO\n\n\n\n\n\nSELECT name, collation_name FROM sys.databases WHERE name = N'USOnTimeProject';\n\nALTER DATABASE USOnTimeProject COLLATE Latin1_General_100_CI_AI_SC_UTF8;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "USOnTimeProject",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

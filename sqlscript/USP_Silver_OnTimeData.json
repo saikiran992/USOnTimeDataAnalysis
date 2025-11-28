@@ -1,0 +1,20 @@
+{
+	"name": "USP_Silver_OnTimeData",
+	"properties": {
+		"folder": {
+			"name": "06_StoredProcedures"
+		},
+		"content": {
+			"query": "USE USOnTimeProject\nGO\n--EXEC silver.USP_Silver_OnTimeData '2022', '12'\n/*\n    This stored procedure is for creating parquet files in silver layer in adls partitioned by year\n    and month folders. This is not a suggested method, but it's an alternative.\n    The best approach is to use spark \n*/\n\nCREATE OR ALTER PROCEDURE silver.USP_Silver_OnTimeData\n@year VARCHAR(4),\n@month VARCHAR(2)\nAS\nBEGIN\n\n    DECLARE @create_sql_stmt NVARCHAR(MAX),\n            @drop_sql_stmt   NVARCHAR(MAX);\n\n    SET @create_sql_stmt = \n        'CREATE EXTERNAL TABLE silver.OnTimeData_' + @year + '_' + @month + \n        ' WITH\n            (\n                DATA_SOURCE = USOnTimeProject_RootFS,\n                LOCATION = ''Silver/OnTimeReporting/year=' + @year + '/month=' + @month + ''',\n                FILE_FORMAT = parquet_file_format\n            )\n        AS\n        SELECT [year]\n,[month]\n,[FL_DATE]\n,[OP_UNIQUE_CARRIER]\n,[OP_CARRIER_AIRLINE_ID]\n,[TAIL_NUM]\n,[OP_CARRIER_FL_NUM]\n,[ORIGIN_AIRPORT_ID]\n,[ORIGIN_AIRPORT_SEQ_ID]\n,[ORIGIN]\n,[ORIGIN_CITY_NAME]\n,[ORIGIN_STATE_ABR]\n,[DEST_AIRPORT_ID]\n,[DEST_AIRPORT_SEQ_ID]\n,[DEST]\n,[DEST_CITY_NAME]\n,[DEST_STATE_ABR]\n,[CRS_DEP_TIME]\n,[DEP_TIME]\n,[DEP_DELAY]\n,[DEP_DELAY_NEW]\n,[TAXI_OUT]\n,[WHEELS_ON]\n,[TAXI_IN]\n,[CRS_ARR_TIME]\n,[ARR_TIME]\n,[ARR_DELAY]\n,[ARR_DELAY_NEW]\n,[CANCELLED]\n,[CANCELLATION_CODE]\n,[DIVERTED]\n,[CRS_ELAPSED_TIME]\n,[ACTUAL_ELAPSED_TIME]\n,[AIR_TIME]\n,[DISTANCE]\n,[CARRIER_DELAY]\n,[WEATHER_DELAY]\n,[NAS_DELAY]\n,[SECURITY_DELAY]\n,[LATE_AIRCRAFT_DELAY]\n        FROM bronze.vw_USOnTimeData_CSV\n        WHERE year = ''' + @year + '''\n          AND month = ''' + @month + '''';    \n\n    print(@create_sql_stmt)\n\n    EXEC sp_executesql @create_sql_stmt;\n\n    SET @drop_sql_stmt = \n        'DROP EXTERNAL TABLE silver.OnTimeData_' + @year + '_' + @month;\n\n    print(@drop_sql_stmt)\n    EXEC sp_executesql @drop_sql_stmt;\n\nEND;\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "USOnTimeProject",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

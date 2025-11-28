@@ -1,0 +1,20 @@
+{
+	"name": "02_CreateSilverView",
+	"properties": {
+		"folder": {
+			"name": "07_CreateSilverTables"
+		},
+		"content": {
+			"query": "USE USOnTimeProject\nGO \n\n-- Create view for trip_data_green\nDROP VIEW IF EXISTS silver.vw_USOnTimeData\nGO\n\nCREATE VIEW silver.vw_USOnTimeData\nAS\nSELECT\n    result.filepath(1) AS year,\n    result.filepath(2) AS month,\n    result.*\nFROM\n    OPENROWSET(\n        BULK 'Silver/OnTimeReporting/year=*/month=*/*.parquet',\n        DATA_SOURCE = 'USOnTimeProject_RootFS',\n        FORMAT = 'PARQUET'\n    )\n    WITH (\n        FL_DATE DATE,\n        OP_UNIQUE_CARRIER VARCHAR(10),\n        OP_CARRIER_AIRLINE_ID INT,\n        TAIL_NUM VARCHAR(10),\n        OP_CARRIER_FL_NUM INT,\n        ORIGIN_AIRPORT_ID INT,\n        ORIGIN_AIRPORT_SEQ_ID INT,\n        ORIGIN VARCHAR(10),\n        ORIGIN_CITY_NAME VARCHAR(50),\n        ORIGIN_STATE_ABR VARCHAR(5),\n        DEST_AIRPORT_ID INT,\n        DEST_AIRPORT_SEQ_ID INT,\n        DEST VARCHAR(10),\n        DEST_CITY_NAME VARCHAR(50),\n        DEST_STATE_ABR VARCHAR(5),\n        CRS_DEP_TIME INT,\n        DEP_TIME INT,\n        DEP_DELAY FLOAT,\n        DEP_DELAY_NEW FLOAT,\n        TAXI_OUT FLOAT,\n        WHEELS_ON INT,\n        TAXI_IN FLOAT,\n        CRS_ARR_TIME INT,\n        ARR_TIME INT,\n        ARR_DELAY FLOAT,\n        ARR_DELAY_NEW FLOAT,\n        CANCELLED FLOAT,\n        CANCELLATION_CODE VARCHAR(5),\n        DIVERTED FLOAT,\n        CRS_ELAPSED_TIME FLOAT,\n        ACTUAL_ELAPSED_TIME FLOAT,\n        AIR_TIME FLOAT,\n        DISTANCE FLOAT,\n        CARRIER_DELAY FLOAT,\n        WEATHER_DELAY FLOAT,\n        NAS_DELAY FLOAT,\n        SECURITY_DELAY FLOAT,\n        LATE_AIRCRAFT_DELAY FLOAT\n  ) AS [result]\nGO\n\nSELECT TOP(100) *\n  FROM silver.vw_USOnTimeData\nGO\n\nselect top 100 * from silver.vw_USOnTimeData \nwhere year='2022' and month ='01'\n\nselect count(1) from silver.vw_USOnTimeData \nwhere year='2022' and month ='01'",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "USOnTimeProject",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

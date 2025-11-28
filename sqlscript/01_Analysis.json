@@ -1,0 +1,20 @@
+{
+	"name": "01_Analysis",
+	"properties": {
+		"folder": {
+			"name": "05_BronzeAnalysis"
+		},
+		"content": {
+			"query": "SELECT COUNT(1) FROM bronze.OnTimeData_CSV\n\n--RecordCount - 6718440\n\nSELECT COUNT(1) FROM bronze.OnTimeData_CSV\nWHERE CANCELLED = 1\n\n--Not Cancelled Count - 6561547\n-- Cancelled Count - 156893\n\nSELECT TOP 10 * FROM bronze.OnTimeData_CSV\nWHERE DEP_TIME IS NULL AND CANCELLED = 0\n\n--If a flight is not departed, it should be cancelled\n--No records with dep time as null and cancellation status as not cancelled\n\nSELECT TOP 10 * FROM bronze.OnTimeData_CSV\nWHERE ARR_TIME IS NULL AND CANCELLED = 0 AND DIVERTED =0\n\n--If a flight is not landed, it should be either cancelled or diverted\n-- No records with arr time as null , which is neither cancelled or diverted\n\nSELECT TOP 10 * FROM bronze.OnTimeData_CSV\nWHERE DEP_TIME IS NOT NULL AND ARR_TIME IS NOT NULL AND CANCELLED = 1\n\n--No records with dep time and arr time which is cancelled\n\n\nSELECT TOP 10 * FROM bronze.OnTimeData_CSV\nWHERE FL_DATE IS NULL\n\n--No records with flight date as null\n\nselect top 10 otd.FL_DATE,otd.OP_UNIQUE_CARRIER\nfrom bronze.OnTimeData_CSV otd\nleft join bronze.Airlines al on al.Code = otd.OP_UNIQUE_CARRIER\nwhere al.Code is null\n\n--No records with invalid airline code\n\nselect top 10 otd.FL_DATE,otd.OP_CARRIER_AIRLINE_ID\nfrom bronze.OnTimeData_CSV otd\nleft join bronze.AirlineId al on al.Code = otd.OP_CARRIER_AIRLINE_ID\nwhere al.Code is null\n\n--no records with invalid airport id\n\nselect top 10 otd.FL_DATE,otd.OP_UNIQUE_CARRIER,otd.ORIGIN\nfrom bronze.OnTimeData_CSV otd\nleft join bronze.Airport ap on ap.Code = otd.ORIGIN\nwhere ap.Code is null\n\n--no records with invalid airport code at origin\n\nselect top 10 otd.FL_DATE,otd.OP_UNIQUE_CARRIER,otd.DEST\nfrom bronze.OnTimeData_CSV otd\nleft join bronze.Airport ap on ap.Code = otd.DEST\nwhere ap.Code is null\n\n--no records with invalid airport code at dest\n\n\nselect top 10 otd.FL_DATE,otd.OP_UNIQUE_CARRIER,otd.ORIGIN_AIRPORT_ID\nfrom bronze.OnTimeData_CSV otd\nleft join bronze.AirportId ap on ap.Code = otd.ORIGIN_AIRPORT_ID\nwhere ap.Code is null\n\n--no records with invalid airport id at origin\n\nselect top 10 otd.FL_DATE,otd.OP_UNIQUE_CARRIER,otd.DEST_AIRPORT_ID\nfrom bronze.OnTimeData_CSV otd\nleft join bronze.AirportId ap on ap.Code = otd.DEST_AIRPORT_ID\nwhere ap.Code is null\n\n--no records with invalid airport id at dest\n\nselect MAX(DEP_DELAY) depdelaymax,\nMAX(DEP_DELAY_NEW) depdelaynewmax,\nMIN(DEP_DELAY) depdelaymin,\nMIN(DEP_DELAY_NEW) depdelaynewmin\nfrom bronze.OnTimeData_CSV otd\n\n--outliers are present with delay minutes over 1000 minutes.\n\n\nselect FL_DATE,OP_UNIQUE_CARRIER,OP_CARRIER_FL_NUM,\nORIGIN,DEST,COUNT(1)\nFROM bronze.OnTimeData_CSV\nGROUP BY FL_DATE,OP_UNIQUE_CARRIER,OP_CARRIER_FL_NUM,ORIGIN,DEST\nHAVING COUNT(1) >1\n\n--uniqueness of record to be set",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "USOnTimeProject",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

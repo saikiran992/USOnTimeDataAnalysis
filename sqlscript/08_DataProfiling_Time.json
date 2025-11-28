@@ -1,0 +1,21 @@
+{
+	"name": "08_DataProfiling_Time",
+	"properties": {
+		"description": "The queries in this script are used for data profiling and deciding best data types for calendar data",
+		"folder": {
+			"name": "02_Data Profiling Lookup"
+		},
+		"content": {
+			"query": "SELECT\n *\nFROM\n    OPENROWSET(\n        BULK 'L_TIME.csv',\n        DATA_SOURCE = 'USOnTimeProject_Lookup',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW = TRUE\n    )\n    WITH (\n        TimeSKey        SMALLINT,\n        TimeKey         SMALLINT,\n        TimeValue       TIME(0),\n        Time_24_Hour    VARCHAR(10),\n        Time_12_Hour    VARCHAR(10),\n        HourNumber      TINYINT,\n        MinuteNumber    TINYINT,\n        PartOfDay       VARCHAR(10),\n        TimeBucket      VARCHAR(20)\n    ) AS [TIME]\n\n--Record Count - 1440\n\n\n\n\n    EXEC sp_describe_first_result_set N'SELECT\n     *\nFROM\n    OPENROWSET(\n        BULK ''https://adlsusontimeproject.dfs.core.windows.net/fsusontimeproject/Lookup/L_TIME.csv'',\n        FORMAT = ''CSV'',\n        PARSER_VERSION = ''2.0'',\n        HEADER_ROW = TRUE\n    ) AS [TIME]'\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "USOnTimeProject",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

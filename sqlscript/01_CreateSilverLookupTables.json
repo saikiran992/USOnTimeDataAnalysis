@@ -1,0 +1,20 @@
+{
+	"name": "01_CreateSilverLookupTables",
+	"properties": {
+		"folder": {
+			"name": "07_CreateSilverTables"
+		},
+		"content": {
+			"query": "USE USOnTimeProject;\n\n--Table 1 - Airport\n\nIF OBJECT_ID('silver.Airport') IS NOT NULL\n    DROP EXTERNAL TABLE silver.taxi_zone\nGO\n\nCREATE EXTERNAL TABLE silver.Airport\n    WITH\n    (\n        DATA_SOURCE = USOnTimeProject_RootFS,\n        LOCATION = 'Silver/Lookup/Airport',\n        FILE_FORMAT = parquet_file_format\n    )\nAS\nSELECT *\n  FROM bronze.Airport;\n\n  SELECT *\n  FROM bronze.Airport;\n\n--Table 2 - AirportId\n\n\n  IF OBJECT_ID('silver.AirportId') IS NOT NULL\n    DROP EXTERNAL TABLE silver.AirportId\nGO\n\nCREATE EXTERNAL TABLE silver.AirportId\n    WITH\n    (\n        DATA_SOURCE = USOnTimeProject_RootFS,\n        LOCATION = 'Silver/Lookup/AirportId',\n        FILE_FORMAT = parquet_file_format\n    )\nAS\nSELECT *\n  FROM bronze.AirportId;\n\n  SELECT *\n  FROM bronze.AirportId;\n\n  --Table 3 - Airlines\n\n\n  IF OBJECT_ID('silver.Airlines') IS NOT NULL\n    DROP EXTERNAL TABLE silver.Airlines\nGO\n\nCREATE EXTERNAL TABLE silver.Airlines\n    WITH\n    (\n        DATA_SOURCE = USOnTimeProject_RootFS,\n        LOCATION = 'Silver/Lookup/Airlines',\n        FILE_FORMAT = parquet_file_format\n    )\nAS\nSELECT *\n  FROM bronze.Airlines;\n\n  SELECT *\n  FROM bronze.Airlines;\n\n\n\n  --Table 4 - AirlineId\n\n\n  IF OBJECT_ID('silver.AirlineId') IS NOT NULL\n    DROP EXTERNAL TABLE silver.AirlineId\nGO\n\nCREATE EXTERNAL TABLE silver.AirlineId\n    WITH\n    (\n        DATA_SOURCE = USOnTimeProject_RootFS,\n        LOCATION = 'Silver/Lookup/AirlineId',\n        FILE_FORMAT = parquet_file_format\n    )\nAS\nSELECT *\n  FROM bronze.AirlineId;\n\n  SELECT *\n  FROM bronze.AirlineId;\n\n    \n--Table 5 - Calendar\n\n\n  IF OBJECT_ID('silver.Calendar') IS NOT NULL\n    DROP EXTERNAL TABLE silver.Calendar\nGO\n\nCREATE EXTERNAL TABLE silver.Calendar\n    WITH\n    (\n        DATA_SOURCE = USOnTimeProject_RootFS,\n        LOCATION = 'Silver/Lookup/Calendar',\n        FILE_FORMAT = parquet_file_format\n    )\nAS\nSELECT *\n  FROM bronze.Calendar;\n\n  SELECT *\n  FROM bronze.Calendar;\n\n\n  --Table 6 - States\n\n\n  IF OBJECT_ID('silver.States') IS NOT NULL\n    DROP EXTERNAL TABLE silver.States\nGO\n\nCREATE EXTERNAL TABLE silver.States\n    WITH\n    (\n        DATA_SOURCE = USOnTimeProject_RootFS,\n        LOCATION = 'Silver/Lookup/States',\n        FILE_FORMAT = parquet_file_format\n    )\nAS\nSELECT *\n  FROM bronze.States;\n\n  SELECT *\n  FROM bronze.States;\n\n  \n  --Table 7 - Cancellation\n\n\n  IF OBJECT_ID('silver.Cancellation') IS NOT NULL\n    DROP EXTERNAL TABLE silver.Cancellation\nGO\n\nCREATE EXTERNAL TABLE silver.Cancellation\n    WITH\n    (\n        DATA_SOURCE = USOnTimeProject_RootFS,\n        LOCATION = 'Silver/Lookup/Cancellation',\n        FILE_FORMAT = parquet_file_format\n    )\nAS\nSELECT *\n  FROM bronze.Cancellation;\n\n  SELECT *\n  FROM bronze.Cancellation;\n\n\n    IF OBJECT_ID('silver.Time') IS NOT NULL\n    DROP EXTERNAL TABLE silver.Time\nGO\n\nCREATE EXTERNAL TABLE silver.Time\n    WITH\n    (\n        DATA_SOURCE = USOnTimeProject_RootFS,\n        LOCATION = 'Silver/Lookup/Time',\n        FILE_FORMAT = parquet_file_format\n    )\nAS\nSELECT *\n  FROM bronze.Time;\n\n  SELECT * FROM silver.Time",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "USOnTimeProject",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

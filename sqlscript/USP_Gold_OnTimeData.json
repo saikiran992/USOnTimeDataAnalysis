@@ -1,0 +1,20 @@
+{
+	"name": "USP_Gold_OnTimeData",
+	"properties": {
+		"folder": {
+			"name": "06_StoredProcedures"
+		},
+		"content": {
+			"query": "USE USOnTimeProject\nGO\n--EXEC gold.USP_Silver_OnTimeData '2022', '12'\n/*\n    This stored procedure is for creating parquet files in gold layer as fact data in adls partitioned by year\n    and month folders. This is not a suggested method, but it's an alternative.\n    The best approach is to use spark \n*/\n\nCREATE OR ALTER PROCEDURE gold.USP_Silver_OnTimeData\n@year VARCHAR(4),\n@month VARCHAR(2)\nAS\nBEGIN\n\n    DECLARE @create_sql_stmt NVARCHAR(MAX),\n            @drop_sql_stmt   NVARCHAR(MAX);\n\n    SET @create_sql_stmt = \n        'CREATE EXTERNAL TABLE gold.OnTimeData_' + @year + '_' + @month + \n        ' WITH\n            (\n                DATA_SOURCE = USOnTimeProject_RootFS,\n                LOCATION = ''Gold/OnTimeReporting/year=' + @year + '/month=' + @month + ''',\n                FILE_FORMAT = parquet_file_format\n            )\n        AS\n        SELECT\n        ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS OnTimeSKey,\n        year as [Year],\n        month as [Month],\n        FL_DATE as FlightDate,\n        OP_UNIQUE_CARRIER as AirlineCode,\n        OP_CARRIER_AIRLINE_ID as AirlineId,\n        OP_CARRIER_FL_NUM as FlightNumber,\n        ORIGIN_AIRPORT_ID as OriginAirportId,\n        ORIGIN as OriginAirportCode,\n        ORIGIN_STATE_ABR as OriginStateCode,\n        DEST_AIRPORT_ID as DestinationAirportId,\n        DEST as DestinationAirportCode,\n        DEST_STATE_ABR as DestinationStateCode,\n        CRS_DEP_TIME as ScheduledDepartureTimeKey,\n        DEP_TIME as ActualDepartureTimeKey,\n        DEP_DELAY as DepartureDelayInMinutes,\n        TAXI_OUT as TaxiOutTimeInMinutes,\n        TAXI_IN as TaxiInTimeInMinutes,\n        CRS_ARR_TIME as ScheduledArrivalTimeKey,\n        ARR_TIME as ActualArrivalTimeKey,\n        ARR_DELAY as ArrivalDelayInMinutes,\n        CANCELLED as IsCancelled,\n        CANCELLATION_CODE as CancellationCode,\n        DIVERTED as IsDiverted,\n        CRS_ELAPSED_TIME as EstimatedElapsedTimeInMinutes,\n        ACTUAL_ELAPSED_TIME as ActualElapsedTimeInMinutes,\n        ACTUAL_ELAPSED_TIME - CRS_ELAPSED_TIME as TotalDelayInMinutes,\n        AIR_TIME as AirTime,\n        DISTANCE as Distance,\n        CARRIER_DELAY as AirlinesDelayInMinutes,\n        WEATHER_DELAY as WeatherDelayInMinutes,\n        NAS_DELAY as NasDelayInMinutes,\n        SECURITY_DELAY as SecurityDelayInMinutes,\n        LATE_AIRCRAFT_DELAY as LateAircraftDelayInMinutes\n        FROM \n        silver.vw_USOnTimeData\n        WHERE year = ''' + @year + '''\n        AND month = ''' + @month + '''';    \n\n    print(@create_sql_stmt)\n\n    EXEC sp_executesql @create_sql_stmt;\n\n    SET @drop_sql_stmt = \n        'DROP EXTERNAL TABLE gold.OnTimeData_' + @year + '_' + @month;\n\n    print(@drop_sql_stmt)\n    EXEC sp_executesql @drop_sql_stmt;\n\nEND;\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "USOnTimeProject",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

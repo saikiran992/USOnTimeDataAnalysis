@@ -1,0 +1,20 @@
+{
+	"name": "03_CreateBronzeView",
+	"properties": {
+		"folder": {
+			"name": "04_CreateBronzeTables"
+		},
+		"content": {
+			"query": "CREATE VIEW bronze.vw_USOnTimeData_CSV\nAS\n\nSELECT\n    result.filepath(1) AS year,\n    result.filepath(2) AS month,\n    result.* \nFROM\n    OPENROWSET(\n        BULK '/*/*/*.csv',\n        DATA_SOURCE = 'USOnTimeProject_Reporting',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW = TRUE\n    )\n    WITH\n    (\n        FL_DATE DATE,\n        OP_UNIQUE_CARRIER VARCHAR(10),\n        OP_CARRIER_AIRLINE_ID INT,\n        TAIL_NUM VARCHAR(10),\n        OP_CARRIER_FL_NUM INT,\n        ORIGIN_AIRPORT_ID INT,\n        ORIGIN_AIRPORT_SEQ_ID INT,\n        ORIGIN VARCHAR(10),\n        ORIGIN_CITY_NAME VARCHAR(50),\n        ORIGIN_STATE_ABR VARCHAR(5),\n        DEST_AIRPORT_ID INT,\n        DEST_AIRPORT_SEQ_ID INT,\n        DEST VARCHAR(10),\n        DEST_CITY_NAME VARCHAR(50),\n        DEST_STATE_ABR VARCHAR(5),\n        CRS_DEP_TIME INT,\n        DEP_TIME INT,\n        DEP_DELAY FLOAT,\n        DEP_DELAY_NEW FLOAT,\n        TAXI_OUT FLOAT,\n        WHEELS_ON INT,\n        TAXI_IN FLOAT,\n        CRS_ARR_TIME INT,\n        ARR_TIME INT,\n        ARR_DELAY FLOAT,\n        ARR_DELAY_NEW FLOAT,\n        CANCELLED FLOAT,\n        CANCELLATION_CODE VARCHAR(5),\n        DIVERTED FLOAT,\n        CRS_ELAPSED_TIME FLOAT,\n        ACTUAL_ELAPSED_TIME FLOAT,\n        AIR_TIME FLOAT,\n        DISTANCE FLOAT,\n        CARRIER_DELAY FLOAT,\n        WEATHER_DELAY FLOAT,\n        NAS_DELAY FLOAT,\n        SECURITY_DELAY FLOAT,\n        LATE_AIRCRAFT_DELAY FLOAT\n    ) as result\n\n\n    select count(1) from bronze.vw_USOnTimeData_CSV\n\n    select top 10 * from bronze.vw_USOnTimeData_CSV WHERE year = '2022' AND month ='01'\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "USOnTimeProject",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

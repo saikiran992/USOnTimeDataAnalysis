@@ -1,0 +1,20 @@
+{
+	"name": "02_CreateBronzeOnTimeTable",
+	"properties": {
+		"folder": {
+			"name": "04_CreateBronzeTables"
+		},
+		"content": {
+			"query": "IF OBJECT_ID('bronze.OnTimeData_CSV') IS NOT NULL\n    DROP EXTERNAL TABLE bronze.OnTimeData_CSV;\n\nCREATE EXTERNAL TABLE bronze.OnTimeData_CSV\n    (\n        FL_DATE DATE,\n        OP_UNIQUE_CARRIER VARCHAR(10),\n        OP_CARRIER_AIRLINE_ID INT,\n        TAIL_NUM VARCHAR(10),\n        OP_CARRIER_FL_NUM INT,\n        ORIGIN_AIRPORT_ID INT,\n        ORIGIN_AIRPORT_SEQ_ID INT,\n        ORIGIN VARCHAR(10),\n        ORIGIN_CITY_NAME VARCHAR(50),\n        ORIGIN_STATE_ABR VARCHAR(5),\n        DEST_AIRPORT_ID INT,\n        DEST_AIRPORT_SEQ_ID INT,\n        DEST VARCHAR(10),\n        DEST_CITY_NAME VARCHAR(50),\n        DEST_STATE_ABR VARCHAR(5),\n        CRS_DEP_TIME INT,\n        DEP_TIME INT,\n        DEP_DELAY FLOAT,\n        DEP_DELAY_NEW FLOAT,\n        TAXI_OUT FLOAT,\n        WHEELS_ON INT,\n        TAXI_IN FLOAT,\n        CRS_ARR_TIME INT,\n        ARR_TIME INT,\n        ARR_DELAY FLOAT,\n        ARR_DELAY_NEW FLOAT,\n        CANCELLED FLOAT,\n        CANCELLATION_CODE VARCHAR(5),\n        DIVERTED FLOAT,\n        CRS_ELAPSED_TIME FLOAT,\n        ACTUAL_ELAPSED_TIME FLOAT,\n        AIR_TIME FLOAT,\n        DISTANCE FLOAT,\n        CARRIER_DELAY FLOAT,\n        WEATHER_DELAY FLOAT,\n        NAS_DELAY FLOAT,\n        SECURITY_DELAY FLOAT,\n        LATE_AIRCRAFT_DELAY FLOAT\n    )  \n    WITH (\n        LOCATION = '/**',\n        DATA_SOURCE = USOnTimeProject_Reporting,   \n        FILE_FORMAT = csv_file_format\n    );\n\nSELECT TOP(100) * FROM bronze.OnTimeData_CSV;\n\n\nIF OBJECT_ID('bronze.OnTimeData_Parquet') IS NOT NULL\n    DROP EXTERNAL TABLE bronze.OnTimeData_Parquet;\n\nCREATE EXTERNAL TABLE bronze.OnTimeData_Parquet\n    (\n        FL_DATE DATE,\n        OP_UNIQUE_CARRIER VARCHAR(10),\n        OP_CARRIER_AIRLINE_ID INT,\n        TAIL_NUM VARCHAR(10),\n        OP_CARRIER_FL_NUM INT,\n        ORIGIN_AIRPORT_ID INT,\n        ORIGIN_AIRPORT_SEQ_ID INT,\n        ORIGIN VARCHAR(10),\n        ORIGIN_CITY_NAME VARCHAR(50),\n        ORIGIN_STATE_ABR VARCHAR(5),\n        DEST_AIRPORT_ID INT,\n        DEST_AIRPORT_SEQ_ID INT,\n        DEST VARCHAR(10),\n        DEST_CITY_NAME VARCHAR(50),\n        DEST_STATE_ABR VARCHAR(5),\n        CRS_DEP_TIME INT,\n        DEP_TIME INT,\n        DEP_DELAY FLOAT,\n        DEP_DELAY_NEW FLOAT,\n        TAXI_OUT FLOAT,\n        WHEELS_ON INT,\n        TAXI_IN FLOAT,\n        CRS_ARR_TIME INT,\n        ARR_TIME INT,\n        ARR_DELAY FLOAT,\n        ARR_DELAY_NEW FLOAT,\n        CANCELLED FLOAT,\n        CANCELLATION_CODE VARCHAR(5),\n        DIVERTED FLOAT,\n        CRS_ELAPSED_TIME FLOAT,\n        ACTUAL_ELAPSED_TIME FLOAT,\n        AIR_TIME FLOAT,\n        DISTANCE FLOAT,\n        CARRIER_DELAY FLOAT,\n        WEATHER_DELAY FLOAT,\n        NAS_DELAY FLOAT,\n        SECURITY_DELAY FLOAT,\n        LATE_AIRCRAFT_DELAY FLOAT\n    )  \n    WITH (\n        LOCATION = '/**',\n        DATA_SOURCE = USOnTimeProject_Reporting_Parquet,   \n        FILE_FORMAT = parquet_file_format\n    );\n\nSELECT count(1)  FROM bronze.OnTimeData_Parquet;\n\nSELECT COUNT(1)  FROM bronze.OnTimeData_CSV;\n\n\nSELECT top 10*\nFROM OPENROWSET(\n    BULK '/*/*.parquet',\n    DATA_SOURCE = 'USOnTimeProject_Reporting_Parquet',\n    FORMAT = 'PARQUET'\n) AS data;\n\n\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "USOnTimeProject",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

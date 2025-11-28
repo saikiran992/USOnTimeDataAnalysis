@@ -1,0 +1,20 @@
+{
+	"name": "02_CreateGoldView",
+	"properties": {
+		"folder": {
+			"name": "08_Gold"
+		},
+		"content": {
+			"query": "USE USOnTimeProject\nGO \n\n-- Create view for trip_data_green\nDROP VIEW IF EXISTS gold.vw_FactOnTimeData\nGO\n\nCREATE VIEW gold.vw_FactOnTimeData\nAS\nSELECT\n    result.*,\n    result.filepath(1) AS yearfilter,\n    result.filepath(2) AS monthfilter\nFROM\n    OPENROWSET(\n        BULK 'Gold/OnTimeReporting/year=*/month=*/*.parquet',\n        DATA_SOURCE = 'USOnTimeProject_RootFS',\n        FORMAT = 'PARQUET'\n    )\n    WITH (\n        OnTimeSKey INT,\n        FlightDate DATE,\n        AirlineCode VARCHAR(10),\n        AirlineId INT,\n        FlightNumber INT,\n        OriginAirportId INT,\n        OriginAirportCode VARCHAR(10),\n        OriginStateCode VARCHAR(5),\n        DestinationAirportId INT,\n        DestinationAirportCode VARCHAR(10),\n        DestinationStateCode VARCHAR(5),\n        ScheduledDepartureTimeKey INT,\n        ActualDepartureTimeKey INT,\n        DepartureDelayInMinutes FLOAT,\n        TaxiOutTimeInMinutes FLOAT,\n        TaxiInTimeInMinutes FLOAT,\n        ScheduledArrivalTimeKey INT,\n        ActualArrivalTimeKey INT,\n        ArrivalDelayInMinutes FLOAT,\n        IsCancelled FLOAT,\n        CancellationCode VARCHAR(5),\n        IsDiverted FLOAT,\n        EstimatedElapsedTimeInMinutes FLOAT,\n        ActualElapsedTimeInMinutes FLOAT,\n        TotalDelayInMinutes FLOAT,\n        AirTime FLOAT,\n        Distance FLOAT,\n        AirlinesDelayInMinutes FLOAT,\n        WeatherDelayInMinutes FLOAT,\n        NasDelayInMinutes FLOAT,\n        SecurityDelayInMinutes FLOAT,\n        LateAircraftDelayInMinutes FLOAT\n  ) AS [result]\nGO\n\nSELECT TOP(100) *\n  FROM silver.vw_USOnTimeData\nGO\n\nselect top 100 * from silver.vw_USOnTimeData \nwhere year='2022' and month ='01'\n\nselect count(1) from silver.vw_USOnTimeData \nwhere year='2022' and month ='01'",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "USOnTimeProject",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
